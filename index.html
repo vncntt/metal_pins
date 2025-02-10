@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Depth Estimation + Pin Simulation</title>
+    <link rel="stylesheet" href="/style.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: sans-serif;
+        max-width: 1400px;
+        margin: 0 auto;
+        height: 100vh;
+        box-sizing: border-box;
+      }
+      h1, h3 {
+        text-align: center;
+        margin: 0.5rem 0;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 2rem;
+        align-items: start;
+        height: calc(100% - 100px); /* Account for headers */
+      }
+      #container {
+        position: relative;
+      }
+      #video, #output-canvas {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      #output-canvas {
+        margin-top: 0.5rem;
+      }
+      #three-container {
+        width: 100%;
+        height: calc(100vh - 120px);
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        background: #f8f8f8;
+        overflow: hidden;
+        position: relative;
+      }
+      #three-container canvas {
+        width: 100% !important;
+        height: 100% !important;
+        position: absolute;
+      }
+      #controls {
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+        background: #f0f0f0;
+        border-radius: 8px;
+      }
+      label {
+        display: inline-block;
+        min-width: 70px;
+      }
+      input[type="range"] {
+        width: 150px;
+        margin-left: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Real-time Depth Estimation + Pin Art</h1>
+    <h3>Using Depth Anything V2 + metal pin simulation</h3>
+
+    <div class="layout">
+      <div class="left-column">
+        <div id="container">
+          <video id="video" autoplay muted playsinline></video>
+          <canvas id="output-canvas"></canvas>
+        </div>
+
+        <div id="controls">
+          <div title="Width of the input image">
+            <label>Image size (<span id="size-value">504</span>px):</label>
+            <input
+              id="size"
+              type="range"
+              min="140"
+              max="840"
+              step="14"
+              value="504"
+              disabled
+            />
+          </div>
+          <label id="status">Loading model...</label>
+        </div>
+      </div>
+
+      <div class="right-column">
+        <div id="three-container"></div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
