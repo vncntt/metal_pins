@@ -27,12 +27,12 @@ let scene, camera, renderer, controls;
 let pins = [];
  
 const gridSize = 120;
-const spacing = 0.3;
+const spacing = 0.2;
 const pinRadius = 0.12;
 const pinHeight = 5.0;
-const pinDepthScale = 10.0;  // Add this new constant
+const pinDepthScale = 10.0;  
 // Add border size for the frame
-const borderSize = 2.0; // Extra space on each side
+const borderSize = 2; // Extra space on each side
  
 // For hex grids, define horizontal/vertical spacing
 const hexHorizontalSpacing = Math.sqrt(3) * spacing; // distance between pin centers in x
@@ -40,7 +40,9 @@ const hexVerticalSpacing = 1.5 * spacing;            // distance between pin cen
 // We'll compute the bounding width/height for the hex grid
 const totalWidth = (gridSize - 1) * hexHorizontalSpacing + spacing;
 const totalHeight = (gridSize - 1) * hexVerticalSpacing + spacing;
-const basePlateSize = Math.max(totalWidth, totalHeight) + borderSize * 2;
+// Use separate dimensions for width and height instead of taking the max
+const basePlateWidth = totalWidth + borderSize * 2;
+const basePlateHeight = totalHeight + borderSize * 2;
  
 // For reading frames
 const context = canvas.getContext("2d", { willReadFrequently: true });
@@ -86,6 +88,7 @@ sizeSlider.disabled = false;
 function setStreamSize(w, h) {
   video.width = outputCanvas.width = canvas.width = w;
   video.height = outputCanvas.height = canvas.height = h;
+  video.style.transform = 'scaleX(-1)';
 }
  
 // === Quadratic interpolation helper functions ===
@@ -191,7 +194,8 @@ function initPinsScene() {
       const zPos = row * hexVerticalSpacing;
  
       // Center them by subtracting half the total dimension
-      pinGroup.position.x = xPos - offsetX;
+      // Flip the X coordinate by negating xPos - offsetX
+      pinGroup.position.x = -(xPos - offsetX);  // Added negative sign here
       pinGroup.position.z = zPos - offsetZ;
       pinGroup.position.y = 0;
  
@@ -202,7 +206,7 @@ function initPinsScene() {
  
   // Base plate
   const baseThickness = 0.2;
-  const baseGeometry = new THREE.BoxGeometry(basePlateSize, baseThickness, basePlateSize);
+  const baseGeometry = new THREE.BoxGeometry(basePlateWidth, baseThickness, basePlateHeight);
   const baseMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
   const base = new THREE.Mesh(baseGeometry, baseMaterial);
   base.position.set(0, baseThickness / 2 - 0.01, 0);
@@ -216,9 +220,9 @@ function initPinsScene() {
   const pillarCapGeometry = new THREE.SphereGeometry(pillarCapRadius, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2);
   const pillarMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
  
-  // Glass pane
+  // Glass pane - match base plate dimensions
   const glassThickness = 0.2;
-  const glassGeometry = new THREE.BoxGeometry(basePlateSize, glassThickness, basePlateSize);
+  const glassGeometry = new THREE.BoxGeometry(basePlateWidth, glassThickness, basePlateHeight);
   const glassMaterial = new THREE.MeshPhysicalMaterial({
     color: 0xffffff,
     transparent: true,
@@ -232,15 +236,15 @@ function initPinsScene() {
     ior: 1.5,
   });
   const glass = new THREE.Mesh(glassGeometry, glassMaterial);
-  glass.position.set(0, pillarHeight - 0.5, 0); // Position glass just below pillar tops
+  glass.position.set(0, pillarHeight - 1, 0); // Position glass just below pillar tops
   scene.add(glass);
  
-  // Four pillar positions
+  // Update pillar positions to match rectangular dimensions
   const pillarPositions = [
-    [-basePlateSize / 2 + borderSize / 2, -basePlateSize / 2 + borderSize / 2],
-    [-basePlateSize / 2 + borderSize / 2,  basePlateSize / 2 - borderSize / 2],
-    [ basePlateSize / 2 - borderSize / 2, -basePlateSize / 2 + borderSize / 2],
-    [ basePlateSize / 2 - borderSize / 2,  basePlateSize / 2 - borderSize / 2],
+    [-basePlateWidth / 2 + borderSize / 2, -basePlateHeight / 2 + borderSize / 2],
+    [-basePlateWidth / 2 + borderSize / 2,  basePlateHeight / 2 - borderSize / 2],
+    [ basePlateWidth / 2 - borderSize / 2, -basePlateHeight / 2 + borderSize / 2],
+    [ basePlateWidth / 2 - borderSize / 2,  basePlateHeight / 2 - borderSize / 2],
   ];
   pillarPositions.forEach(([x, z]) => {
     const pillar = new THREE.Mesh(pillarGeometry, pillarMaterial);
