@@ -257,7 +257,7 @@ function initPinsScene() {
     scene.add(cap);
   });
  
-  camera.position.set(25, 45, 40);
+  camera.position.set(15, 30, 15);
   camera.lookAt(0, 0, 0);
 }
  
@@ -366,6 +366,9 @@ function loop() {
 navigator.mediaDevices
   .getUserMedia({ video: { width: 720, height: 720 } })
   .then((stream) => {
+    // Hide the alert message
+    document.querySelector('.alert').style.display = 'none';
+    
     video.srcObject = stream;
     video.play();
  
