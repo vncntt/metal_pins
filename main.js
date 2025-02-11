@@ -89,6 +89,7 @@ function setStreamSize(w, h) {
   video.width = outputCanvas.width = canvas.width = w;
   video.height = outputCanvas.height = canvas.height = h;
   video.style.transform = 'scaleX(-1)';
+  outputCanvas.style.transform = 'scaleX(-1)';  // Mirror the depth display too
 }
  
 // === Quadratic interpolation helper functions ===

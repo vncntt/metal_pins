@@ -59,7 +59,7 @@ This application creates a virtual pin art display using your webcam and real-ti
 
 ## Contributing
 
-This is just a weekend project and can definitely be improved. Feel free to submit a PR!
+This is just a weekend project and can definitely be improved. Feel free to submit a PR. Try to make more fine-grained features appear!
 
 ## License
 
