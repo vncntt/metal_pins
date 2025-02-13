@@ -4,11 +4,22 @@ import {
   RawImage,
 } from "@huggingface/transformers";
  
-// Check if we can use GPU fp16
+// Add new WebGPU detection function
+async function canUseWebGPU() {
+  if (!navigator.gpu) return false;
+  try {
+    const adapter = await navigator.gpu.requestAdapter();
+    return !!adapter; 
+  } catch {
+    return false;
+  }
+}
+
+// Update the existing hasFp16 function
 async function hasFp16() {
   try {
     const adapter = await navigator.gpu.requestAdapter();
-    return adapter.features.has("shader-f16");
+    return adapter && adapter.features.has("shader-f16");
   } catch {
     return false;
   }
@@ -59,16 +70,31 @@ let depthHeight; // The model's depth-map height
 // 1) Load the model
 statusEl.textContent = "Loading model...";
 const model_id = "onnx-community/depth-anything-v2-small";
- 
+
+let chosenDevice = "webgpu";
+if (!(await canUseWebGPU())) {
+  chosenDevice = "wasm";
+  console.warn("WebGPU not supported on this device. Using WASM fallback.");
+}
+
+let chosenDtype = "fp32";
+if (chosenDevice === "webgpu" && (await hasFp16())) {
+  chosenDtype = "fp16";
+}
+
 try {
   model = await AutoModel.from_pretrained(model_id, {
-    device: "webgpu",
-    dtype: (await hasFp16()) ? "fp16" : "fp32",
+    device: chosenDevice,
+    dtype: chosenDtype,
   });
+  console.log("device: ", chosenDevice);
+  console.log("dtype: ", chosenDtype);
 } catch (err) {
-  statusEl.textContent = err.message;
-  alert(err.message);
-  throw err;
+  console.warn("Failed to load model with WebGPU. Falling back to WASM: ", err);
+  model = await AutoModel.from_pretrained(model_id, {
+    device: "wasm",
+    dtype: "fp32",
+  });
 }
  
 processor = await AutoImageProcessor.from_pretrained(model_id);
@@ -150,7 +176,7 @@ function initPinsScene() {
   const light = new THREE.DirectionalLight(0xffffff, 1);
   light.position.set(0, 5, 5);
   scene.add(light);
-  scene.add(new THREE.AmbientLight(0x404040));
+  scene.add(new THREE.AmbientLight(0x202020));
  
   // Build pin grid (HEX arrangement)
   const pinBodyRadius = pinRadius;
@@ -162,9 +188,8 @@ function initPinsScene() {
  
   const material = new THREE.MeshPhongMaterial({ 
     color: 0x555555,
-    shininess: 50,
-    specular: 0x666666,
-    metalness: 0.6,
+    shininess: 10,
+    specular: 0x666666
   });
   const tipMaterial = new THREE.MeshPhongMaterial({ 
     color: 0x555555,
@@ -231,11 +256,16 @@ function initPinsScene() {
     roughness: 0.1,
     metalness: 0.1,
     transmission: 0.7,
-    thickness: glassThickness,
     clearcoat: 1.0,
     clearcoatRoughness: 0.1,
     ior: 1.5,
   });
+  
+  // Add transmission properties
+  glassMaterial.transmissionConfig = {
+    samples: 10,
+    thickness: 0.2
+  };
   const glass = new THREE.Mesh(glassGeometry, glassMaterial);
   glass.position.set(0, pillarHeight - 1, 0); // Position glass just below pillar tops
   scene.add(glass);
@@ -364,7 +394,7 @@ function loop() {
  
 // 9) Start up the video
 navigator.mediaDevices
-  .getUserMedia({ video: { width: 720, height: 720 } })
+  .getUserMedia({ video: { width: 640, height: 640 } })
   .then((stream) => {
     // Hide the alert message
     document.querySelector('.alert').style.display = 'none';
