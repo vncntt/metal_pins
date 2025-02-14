@@ -4,7 +4,7 @@ import {
   RawImage,
 } from "@huggingface/transformers";
  
-// Add new WebGPU detection function
+// WebGPU detection function
 async function canUseWebGPU() {
   if (!navigator.gpu) return false;
   try {
@@ -15,7 +15,7 @@ async function canUseWebGPU() {
   }
 }
 
-// Update the existing hasFp16 function
+// existing hasFp16 function
 async function hasFp16() {
   try {
     const adapter = await navigator.gpu.requestAdapter();
@@ -43,7 +43,7 @@ const pinRadius = 0.12;
 const pinHeight = 5.0;
 const pinDepthScale = 10.0;  
 // Add border size for the frame
-const borderSize = 2; // Extra space on each side
+const borderSize = 2; 
  
 // For hex grids, define horizontal/vertical spacing
 const hexHorizontalSpacing = Math.sqrt(3) * spacing; // distance between pin centers in x
@@ -63,9 +63,9 @@ let model;
 let processor;
 let isProcessing = false;
 let previousTime;
-let depthData;   // We'll store the raw depth float array here
-let depthWidth;  // The model's depth-map width
-let depthHeight; // The model's depth-map height
+let depthData;  
+let depthWidth;  
+let depthHeight; 
  
 // 1) Load the model
 statusEl.textContent = "Loading model...";

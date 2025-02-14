@@ -1,15 +1,16 @@
 # [Real-time Metal Pin Art with Depth Estimation](https://vncntt.github.io/metal_pins)
 
 Remember those metal pin art toys you'd press your face or hands into as a kid? 
-You can now use your webcam to create a virtual pin art display in real-time! Wave, make faces, or get creative - the pins will follow your every move. 🎨 ✨
+You can now use your webcam to create a virtual pin art display in real time! Wave, make faces, or get creative - the pins will follow your every move. 🎨 ✨
 
 This application creates a virtual pin art display using your webcam and real-time depth estimation. The app uses the Depth-Anything-V2-small model with HuggingFace's transformers.js to generate depth maps from webcam input and simulates a 3D pin art board using Three.js.
 
+🚫 This doesn't work on mobile devices.
 <p align="center">
   <img src="metal_pins.jpg" width="70%" alt="Metal Pin Art Toy">
 </p>
 
-![Demo Preview](metal_pins.gif) <!-- You'll need to add this -->
+![Demo Preview](metal_pins.gif)
 
 ## Running Locally 
 

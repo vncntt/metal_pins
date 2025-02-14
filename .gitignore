@@ -1,3 +1,4 @@
 /node_modules/*
 /dist/*
 /gif_drafts/*
+*.mp4

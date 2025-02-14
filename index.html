@@ -76,6 +76,24 @@
         max-width: 400px;
         border: 1px solid #ffeeba;
       }
+      .social-links {
+        text-align: center;
+        margin: 0.5rem 0;
+      }
+      .social-links a {
+        color: #0914e6;
+        text-decoration: none;
+      }
+      .social-links a:hover {
+        text-decoration: underline;
+      }
+      .footnote {
+        text-align: center;
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+        padding: 0.5rem;
+      }
     </style>
   </head>
 
@@ -84,6 +102,9 @@
     <h3>Using Depth Anything V2 + metal pin simulation</h3>
     
     <div class="alert">⚠️ Please enable your webcam when prompted</div>
+    <div class="social-links">
+      <a href="https://x.com/vvvincent_c/status/1890461227651940729" target="_blank" rel="noopener">View original tweet →</a>
+    </div>
 
     <div class="layout">
       <div class="left-column">
@@ -113,6 +134,10 @@
         <div id="three-container"></div>
       </div>
     </div>
+
+    <footer class="footnote">
+      ℹ️ This demo requires a desktop browser with WebGPU support and webcam access.
+    </footer>
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
